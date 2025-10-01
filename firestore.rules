@@ -1,105 +1,26 @@
-/**
- * @file Firestore Security Rules for NirogTech Application
- *
- * Core Philosophy:
- * This ruleset enforces a strict user-ownership model for user profiles,
- * with an additional admin role based on document existence in a separate collection.
- * It prioritizes Authorization Independence to avoid costly `get()` operations.
- *
- * Data Structure:
- * - /users/{userId}: Stores individual user profiles. Access is limited to the authenticated user matching the {userId}.
- * - /roles_admin/{userId}: Presence of a document grants admin role to the user.
- *
- * Key Security Decisions:
- * - User profiles are private and accessible only to the authenticated user.
- * - Admin privileges are granted based on the existence of a document in `/roles_admin/{userId}`, avoiding custom claims.
- * - No public listing of users is allowed to prevent information disclosure.
- *
- * Denormalization for Authorization:
- * - Admin role is determined by the existence of a document in `/roles_admin/{userId}`.
- *   This avoids the need to read user documents to determine roles.
- *
- * Structural Segregation:
- * - User profiles are separated from admin role definitions, which allows for
- *   clear and maintainable security rules.
- */
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    /**
-     * @description Checks if the user is signed in.
-     */
-    function isSignedIn() {
-      return request.auth != null;
-    }
-
-    /**
-     * @description Checks if the authenticated user's UID matches the requested user ID.
-     * @param {string} userId - The user ID to compare against the authenticated user's UID.
-     */
-    function isOwner(userId) {
-      return isSignedIn() && request.auth.uid == userId;
-    }
-
-    /**
-     * @description Checks if the authenticated user's UID matches the requested user ID and the resource exists
-     * @param {string} userId - The user ID to compare against the authenticated user's UID.
-     */
-    function isExistingOwner(userId) {
-      return isOwner(userId) && resource != null;
-    }
-
-    /**
-     * @description Checks if the requesting user has admin privileges.
-     * @return {bool} - True if user document exists, false otherwise.
-     */
+  
+    // Helper function to check for admin role
     function isAdmin() {
-        return exists(/databases/$(database)/documents/roles_admin/$(request.auth.uid));
+      return exists(/databases/$(database)/documents/roles_admin/$(request.auth.uid));
     }
 
-    /**
-     * @description Defines the rules for user profile documents.
-     * @path /users/{userId}
-     * @allow (get) Authenticated user with matching userId can read their profile.
-     * @allow (create) Authenticated user can create their own profile.
-     * @allow (update) Authenticated user with matching userId can update their profile.
-     * @allow (delete) Authenticated user with matching userId can delete their profile.
-     * @deny (get) Authenticated user cannot read other user's profile.
-     * @deny (create) Authenticated user cannot create profile for other user.
-     * @deny (update) Authenticated user cannot update other user's profile.
-     * @deny (delete) Authenticated user cannot delete other user's profile.
-     * @principle Enforces document ownership for writes.
-     */
+    // Rules for the 'users' collection
     match /users/{userId} {
-      allow get: if isOwner(userId);
-      allow list: if false; // User listing is not permitted for privacy reasons.
-
-      allow create: if isOwner(userId) && request.resource.data.id == userId;
-      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
-      allow delete: if isExistingOwner(userId);
+      // Users can read their own profile. Admins can read any profile.
+      allow read: if request.auth.uid == userId || isAdmin();
+      
+      // Users can create, update, and delete their own profile.
+      allow write: if request.auth.uid == userId;
     }
-
-    /**
-     * @description Defines the rules for admin role documents.
-     * @path /roles_admin/{userId}
-     * @allow (get) Admin can read the role document.
-     * @allow (create) Admin can create the role document.
-     * @allow (update) Admin can update the role document.
-     * @allow (delete) Admin can delete the role document.
-     * @deny (get) Non-admin cannot read the role document.
-     * @deny (create) Non-admin cannot create the role document.
-     * @deny (update) Non-admin cannot update the role document.
-     * @deny (delete) Non-admin cannot delete the role document.
-     * @principle Restricts access to admin role to admins only.
-     */
+    
+    // Rules for the 'roles_admin' collection
     match /roles_admin/{userId} {
-        allow get: if isAdmin();
-        allow list: if false;
-
-        allow create: if isAdmin();
-        allow update: if false;
-        allow delete: if isAdmin();
+      // Only admins can read or write to the admin roles collection.
+      allow read, write: if isAdmin();
     }
   }
 }
