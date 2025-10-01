@@ -32,7 +32,11 @@ export async function nirogChatbot(input: NirogChatbotInput): Promise<NirogChatb
 
 const prompt = ai.definePrompt({
   name: 'nirogChatbotPrompt',
-  input: { schema: NirogChatbotInputSchema },
+  input: { schema: z.object({
+    userRole: z.string(),
+    query: z.string(),
+    history: z.string(),
+  }) },
   output: { schema: NirogChatbotOutputSchema },
   prompt: `You are the official AI assistant for the NirogTech healthcare platform. Your response must be tailored to the user's role: {{{userRole}}}.
 
@@ -47,13 +51,7 @@ Role-Specific Instructions:
 - For STUDENTS: Provide educational content, study materials, internship guidance, and explanations of medical concepts.
 
 Conversation History:
-{{#each conversationHistory}}
-  {{#if (eq role "user")}}
-    User: {{{content}}}
-  {{else}}
-    Bot: {{{content}}}
-  {{/if}}
-{{/each}}
+{{{history}}}
 
 User Query: {{{query}}}
 
@@ -72,7 +70,15 @@ const nirogChatbotFlow = ai.defineFlow(
     outputSchema: NirogChatbotOutputSchema,
   },
   async (input) => {
-    const { output } = await prompt(input);
+    const history = (input.conversationHistory || [])
+      .map(msg => `${msg.role === 'user' ? 'User' : 'Bot'}: ${msg.content}`)
+      .join('\n');
+
+    const { output } = await prompt({
+        userRole: input.userRole,
+        query: input.query,
+        history: history
+    });
     return output!;
   }
 );

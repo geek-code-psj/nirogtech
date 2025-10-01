@@ -33,7 +33,11 @@ export async function liveChatSupport(input: LiveChatSupportInput): Promise<Live
 
 const liveChatSupportPrompt = ai.definePrompt({
   name: 'liveChatSupportPrompt',
-  input: {schema: LiveChatSupportInputSchema},
+  input: {schema: z.object({
+    query: z.string(),
+    history: z.string(),
+    escalateToHuman: z.boolean().optional(),
+  })},
   output: {schema: LiveChatSupportOutputSchema},
   prompt: `You are a 24/7 live chat support agent for NirogTech, a telehealth company.
 
@@ -42,13 +46,7 @@ const liveChatSupportPrompt = ai.definePrompt({
   Otherwise, provide a helpful response and keep escalateToHuman as false.
 
   Here's the conversation history:
-  {{#each conversationHistory}}
-    {{#if (eq role \"user\")}}
-      User: {{{content}}}
-    {{else}}
-      Bot: {{{content}}}
-    {{/if}}
-  {{/each}}
+  {{{history}}}
 
   User query: {{{query}}}
 
@@ -81,18 +79,16 @@ const liveChatSupportFlow = ai.defineFlow(
     outputSchema: LiveChatSupportOutputSchema,
   },
   async input => {
-    const {
-      query,
-      conversationHistory,
-      escalateToHuman,
-    } = input;
+    const history = (input.conversationHistory || [])
+      .map(msg => `${msg.role === 'user' ? 'User' : 'Bot'}: ${msg.content}`)
+      .join('\n');
 
     const {
       output,
     } = await liveChatSupportPrompt({
-      query,
-      conversationHistory,
-      escalateToHuman: escalateToHuman || false,
+      query: input.query,
+      history: history,
+      escalateToHuman: input.escalateToHuman || false,
     });
 
     return {
