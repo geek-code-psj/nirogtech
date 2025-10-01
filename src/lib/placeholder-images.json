@@ -1,3 +1,70 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "hero",
+      "description": "A diverse group of healthcare professionals smiling in a modern clinic.",
+      "imageUrl": "https://images.unsplash.com/photo-1631507623095-c710d184498f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxoZWFsdGhjYXJlJTIwcHJvZmVzc2lvbmFscyUyMGNsaW5pY3xlbnwwfHx8fDE3NTkzNTA1MTR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "healthcare professionals clinic"
+    },
+    {
+      "id": "avatar-1",
+      "description": "Avatar for Priya Sharma",
+      "imageUrl": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHx3b21hbiUyMHNtaWxpbmd8ZW58MHx8fHwxNzU5MjMzMTk0fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "woman smiling"
+    },
+    {
+      "id": "avatar-2",
+      "description": "Avatar for Dr. Arjun Mehta",
+      "imageUrl": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxtYW4lMjBwcm9mZXNzaW9uYWx8ZW58MHx8fHwxNzU5Mjk1NTA3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "man professional"
+    },
+    {
+      "id": "avatar-3",
+      "description": "Avatar for Rohan Verma",
+      "imageUrl": "https://images.unsplash.com/photo-1528900403525-dc523d4f18d6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHx5b3VuZyUyMG1hbnxlbnwwfHx8fDE3NTkzMDQwODd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "young man"
+    },
+    {
+      "id": "doctor-1",
+      "description": "Portrait of Dr. Anjali Rao",
+      "imageUrl": "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxkb2N0b3IlMjB3b21hbnxlbnwwfHx8fDE3NTkzNTA1MTR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "doctor woman"
+    },
+    {
+      "id": "doctor-2",
+      "description": "Portrait of Dr. Vikram Singh",
+      "imageUrl": "https://images.unsplash.com/photo-1615177393114-bd2917a4f74a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8ZG9jdG9yJTIwbWFufGVufDB8fHx8MTc1OTMwMjEyOXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "doctor man"
+    },
+    {
+      "id": "doctor-3",
+      "description": "Portrait of Dr. Sunita Desai",
+      "imageUrl": "https://images.unsplash.com/photo-1758127211629-81c0df0592cf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxkb2N0b3IlMjBwcm9mZXNzaW9uYWx8ZW58MHx8fHwxNzU5MzEwNTA1fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "doctor professional"
+    },
+    {
+      "id": "doctor-4",
+      "description": "Portrait of Dr. Rahul Kapoor",
+      "imageUrl": "https://images.unsplash.com/photo-1758691463384-771db2f192b3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxkb2N0b3IlMjBzbWlsaW5nfGVufDB8fHx8MTc1OTI0NjE3MHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "doctor smiling"
+    },
+    {
+      "id": "learn-1",
+      "description": "Thumbnail for a medical article on cardiology.",
+      "imageUrl": "https://images.unsplash.com/photo-1715111965541-7cdbd8d1aa5b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxoZWFydCUyMGFuYXRvbXl8ZW58MHx8fHwxNzU5MzUwNTE0fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "heart anatomy"
+    },
+    {
+      "id": "learn-2",
+      "description": "Thumbnail for a video on surgical procedures.",
+      "imageUrl": "https://images.unsplash.com/photo-1746807177009-826f115f41f2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxzdXJnZXJ5JTIwb3BlcmF0aW5nfGVufDB8fHx8MTc1OTM1MDUxNHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "surgery operating"
+    },
+    {
+      "id": "learn-3",
+      "description": "Thumbnail for a case study on neurology.",
+      "imageUrl": "https://images.unsplash.com/photo-1644648479153-2a3dbee76212?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxicmFpbiUyMG1yaXxlbnwwfHx8fDE3NTkzNTA1MTR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "brain mri"
+    }
+  ]
 }
