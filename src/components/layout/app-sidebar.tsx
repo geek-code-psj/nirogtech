@@ -30,6 +30,7 @@ import { useUser, useDoc, useFirestore, useMemoFirebase } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import type { UserProfile } from '@/lib/types';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import { getAuth, signOut } from 'firebase/auth';
 
 const navLinks = {
   patient: [
@@ -66,6 +67,8 @@ export default function AppSidebar() {
   const pathname = usePathname();
   const { user } = useUser();
   const firestore = useFirestore();
+  const auth = getAuth();
+
 
   const userProfileRef = useMemoFirebase(() => {
     if (!user || !firestore) return null;
@@ -83,6 +86,10 @@ export default function AppSidebar() {
         return pathname === '/dashboard';
     }
     return pathname.startsWith(href);
+  };
+
+  const handleLogout = () => {
+    signOut(auth);
   };
   
   return (
@@ -125,11 +132,9 @@ export default function AppSidebar() {
                 </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip={{children: 'Logout'}}>
-                    <Link href="/login">
-                        <LogOut className="size-4" />
-                        <span>Logout</span>
-                    </Link>
+                <SidebarMenuButton onClick={handleLogout} tooltip={{children: 'Logout'}}>
+                  <LogOut className="size-4" />
+                  <span>Logout</span>
                 </SidebarMenuButton>
             </SidebarMenuItem>
         </SidebarMenu>
