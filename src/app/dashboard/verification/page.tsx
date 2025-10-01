@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { UploadCloud, File, X, CheckCircle, AlertTriangle } from 'lucide-react';
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { Input } from '@/components/ui/input';
 
 type FileStatus = 'pending' | 'uploading' | 'success' | 'error';
 type UploadedFile = {
