@@ -64,7 +64,7 @@ export default function AppHeader() {
              <Breadcrumb>
                 <BreadcrumbList>
                     {breadcrumbs.map((crumb, index) => (
-                    <React.Fragment key={crumb.href}>
+                    <React.Fragment key={`${crumb.href}-${index}`}>
                         <BreadcrumbItem>
                         {index === breadcrumbs.length - 1 ? (
                             <BreadcrumbPage className="font-headline">{crumb.label}</BreadcrumbPage>
