@@ -9,8 +9,7 @@
  */
 
 import { ai } from '@/ai/genkit';
-import { z } from 'genkit';
-import type { UserRole } from '@/lib/types';
+import { z } from 'zod';
 
 const NirogChatbotInputSchema = z.object({
   userRole: z.enum(['patient', 'doctor', 'student', 'admin']).describe('The role of the user.'),
