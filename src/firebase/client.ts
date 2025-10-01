@@ -9,7 +9,12 @@ import { firebaseConfig } from './config';
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
 if (typeof window !== 'undefined') {
-    getAnalytics(app);
+    // Conditional check for browser environment
+    try {
+        getAnalytics(app);
+    } catch (error) {
+        console.error("Failed to initialize Analytics", error);
+    }
 }
 
 export { app };
