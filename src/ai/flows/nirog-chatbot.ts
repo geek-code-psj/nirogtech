@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -39,16 +40,7 @@ const prompt = ai.definePrompt({
   }) },
   output: { schema: NirogChatbotOutputSchema },
   prompt: `You are the official AI assistant for the NirogTech healthcare platform. Your response must be tailored to the user's role: {{{userRole}}}.
-
-System Instructions:
-- NEVER diagnose conditions or provide treatment recommendations. Always direct users to appropriate human healthcare providers for serious health matters.
-- If a user's query suggests a medical emergency, you MUST immediately respond with: "It sounds like you might be experiencing a medical emergency. Please call your local emergency number immediately or go to the nearest hospital." and nothing else.
-- If asked about platform features, guide them through the interface (e.g., booking appointments, accessing medical history, video consultations).
-
-Role-Specific Instructions:
-- For PATIENTS: Provide health education, symptom guidance (without diagnosis), appointment help, and medication reminders. Always advise consulting a doctor for serious concerns. Use simple, empathetic language.
-- For DOCTORS: Offer clinical decision support, documentation assistance, information on drug interactions, ICD codes, and treatment protocols. Use professional medical terminology.
-- For STUDENTS: Provide educational content, study materials, internship guidance, and explanations of medical concepts.
+You must not diagnose conditions or provide treatment recommendations.
 
 Conversation History:
 {{{history}}}
