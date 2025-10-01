@@ -1,11 +1,15 @@
 export type UserRole = 'patient' | 'doctor' | 'student' | 'admin';
 
-export type User = {
+export type UserProfile = {
   id: string;
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
-  avatar: string;
   role: UserRole;
+  phone?: string;
+  dateOfBirth?: string;
+  address?: string;
+  profilePicture?: string;
 };
 
 export type Doctor = {

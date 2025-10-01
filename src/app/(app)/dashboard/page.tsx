@@ -1,12 +1,16 @@
-import type { UserRole } from '@/lib/types';
+'use client';
+import type { UserProfile } from '@/lib/types';
 import PatientDashboard from '@/components/dashboard/patient-dashboard';
 import DoctorDashboard from '@/components/dashboard/doctor-dashboard';
 import StudentDashboard from '@/components/dashboard/student-dashboard';
 import AdminDashboard from '@/components/dashboard/admin-dashboard';
 import { Suspense } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useUser, useDoc, useMemoFirebase, useFirestore } from '@/firebase';
+import { doc } from 'firebase/firestore';
 
-function DashboardContent({ role }: { role: UserRole }) {
+
+function DashboardContent({ role }: { role: UserProfile['role'] }) {
   switch (role) {
     case 'patient':
       return <PatientDashboard />;
@@ -21,13 +25,23 @@ function DashboardContent({ role }: { role: UserRole }) {
   }
 }
 
-export default function DashboardPage({
-  searchParams,
-}: {
-  searchParams: { role?: UserRole };
-}) {
-  const role = searchParams.role || 'patient';
-  const userName = "User"; // In a real app, this would come from session
+export default function DashboardPage() {
+  const { user } = useUser();
+  const firestore = useFirestore();
+
+  const userProfileRef = useMemoFirebase(() => {
+    if (!user || !firestore) return null;
+    return doc(firestore, 'users', user.uid);
+  }, [firestore, user]);
+  
+  const { data: userProfile, isLoading } = useDoc<UserProfile>(userProfileRef);
+
+  if (isLoading || !userProfile) {
+    return <DashboardSkeleton />;
+  }
+  
+  const role = userProfile.role || 'patient';
+  const userName = userProfile.firstName || "User";
 
   return (
     <div className="space-y-6">

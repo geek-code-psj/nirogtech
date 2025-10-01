@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,10 +10,9 @@ import {
   Menu,
   Search,
   TriangleAlert,
-  Home,
-  User,
   Settings,
   LogOut,
+  User as UserIcon,
 } from 'lucide-react';
 import AppSidebar from './app-sidebar';
 import Link from 'next/link';
@@ -26,11 +25,26 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
+import { useUser, useDoc, useFirestore, useMemoFirebase } from '@/firebase';
+import { doc } from 'firebase/firestore';
+import type { UserProfile } from '@/lib/types';
+import { getAuth, signOut } from 'firebase/auth';
+
 
 export default function AppHeader() {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const role = searchParams.get('role');
+  const { user } = useUser();
+  const firestore = useFirestore();
+  const auth = getAuth();
+
+  const userProfileRef = useMemoFirebase(() => {
+    if (!user || !firestore) return null;
+    return doc(firestore, 'users', user.uid);
+  }, [firestore, user]);
+
+  const { data: userProfile } = useDoc<UserProfile>(userProfileRef);
+  const role = userProfile?.role || 'patient';
+
 
   const getBreadcrumbs = () => {
     const segments = pathname.split('/').filter(Boolean);
@@ -43,6 +57,10 @@ export default function AppHeader() {
   };
 
   const breadcrumbs = getBreadcrumbs();
+  
+  const handleLogout = () => {
+    signOut(auth);
+  };
 
   return (
     <header className="flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6 sticky top-0 z-30">
@@ -131,8 +149,8 @@ export default function AppHeader() {
           <DropdownMenuTrigger asChild>
             <Button variant="secondary" size="icon" className="rounded-full">
                 <Avatar className="size-8">
-                    <AvatarImage src="https://picsum.photos/seed/user-avatar/100/100" alt="User" />
-                    <AvatarFallback>U</AvatarFallback>
+                    <AvatarImage src={userProfile?.profilePicture || "https://picsum.photos/seed/user-avatar/100/100"} alt={userProfile?.firstName} />
+                    <AvatarFallback>{userProfile?.firstName?.charAt(0) || 'U'}</AvatarFallback>
                 </Avatar>
               <span className="sr-only">Toggle user menu</span>
             </Button>
@@ -141,7 +159,7 @@ export default function AppHeader() {
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-              <User className="mr-2 h-4 w-4" />
+              <UserIcon className="mr-2 h-4 w-4" />
               <span>Profile</span>
             </DropdownMenuItem>
             <DropdownMenuItem>
@@ -149,11 +167,9 @@ export default function AppHeader() {
               <span>Settings</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-                <Link href="/login">
-                    <LogOut className="mr-2 h-4 w-4" />
-                    <span>Log out</span>
-                </Link>
+            <DropdownMenuItem onClick={handleLogout}>
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Log out</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

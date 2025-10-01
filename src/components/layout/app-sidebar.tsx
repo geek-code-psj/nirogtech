@@ -1,8 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import { useSearchParams, usePathname } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import {
+  Sidebar,
   SidebarHeader,
   SidebarContent,
   SidebarFooter,
@@ -25,7 +26,9 @@ import {
   Bell,
   MessageSquare
 } from 'lucide-react';
-import type { UserRole } from '@/lib/types';
+import { useUser, useDoc, useFirestore, useMemoFirebase } from '@/firebase';
+import { doc } from 'firebase/firestore';
+import type { UserProfile } from '@/lib/types';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 
 const navLinks = {
@@ -60,11 +63,20 @@ const navLinks = {
 };
 
 export default function AppSidebar() {
-  const searchParams = useSearchParams();
   const pathname = usePathname();
-  const role = (searchParams.get('role') as UserRole) || 'patient';
-  const currentLinks = navLinks[role] || navLinks.patient;
+  const { user } = useUser();
+  const firestore = useFirestore();
 
+  const userProfileRef = useMemoFirebase(() => {
+    if (!user || !firestore) return null;
+    return doc(firestore, 'users', user.uid);
+  }, [firestore, user]);
+
+  const { data: userProfile } = useDoc<UserProfile>(userProfileRef);
+
+  const role = userProfile?.role || 'patient';
+  const currentLinks = navLinks[role] || navLinks.patient;
+  
   const isActive = (href: string) => {
     // Special case for dashboard
     if (href === '/dashboard') {
@@ -74,7 +86,7 @@ export default function AppSidebar() {
   };
   
   return (
-    <>
+    <Sidebar collapsible="icon">
       <SidebarHeader>
         <Link href={`/dashboard?role=${role}`} className="flex items-center gap-2">
             <Logo className="size-8 text-primary" />
@@ -105,10 +117,10 @@ export default function AppSidebar() {
                 <SidebarMenuButton asChild tooltip={{children: 'User Profile'}}>
                     <Link href={`/profile?role=${role}`}>
                         <Avatar className="size-7">
-                            <AvatarImage src="https://picsum.photos/seed/user-avatar/100/100" alt="User" />
-                            <AvatarFallback>U</AvatarFallback>
+                            <AvatarImage src={userProfile?.profilePicture || "https://picsum.photos/seed/user-avatar/100/100"} alt={userProfile?.firstName} />
+                            <AvatarFallback>{userProfile?.firstName?.charAt(0) || 'U'}</AvatarFallback>
                         </Avatar>
-                        <span>User Profile</span>
+                        <span>{userProfile?.firstName || 'User'} Profile</span>
                     </Link>
                 </SidebarMenuButton>
             </SidebarMenuItem>
@@ -122,6 +134,6 @@ export default function AppSidebar() {
             </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
-    </>
+    </Sidebar>
   );
 }
