@@ -1,0 +1,101 @@
+{
+  "entities": {
+    "UserProfile": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "UserProfile",
+      "type": "object",
+      "description": "Represents a user profile in the NirogTech application.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the UserProfile entity."
+        },
+        "firstName": {
+          "type": "string",
+          "description": "User's first name."
+        },
+        "lastName": {
+          "type": "string",
+          "description": "User's last name."
+        },
+        "email": {
+          "type": "string",
+          "description": "User's email address.",
+          "format": "email"
+        },
+        "phone": {
+          "type": "string",
+          "description": "User's phone number."
+        },
+        "dateOfBirth": {
+          "type": "string",
+          "description": "User's date of birth.",
+          "format": "date-time"
+        },
+        "address": {
+          "type": "string",
+          "description": "User's address."
+        },
+        "role": {
+          "type": "string",
+          "description": "User's role (e.g., patient, doctor, student, admin)."
+        },
+        "profilePicture": {
+          "type": "string",
+          "description": "URL to the user's profile picture.",
+          "format": "uri"
+        }
+      },
+      "required": [
+        "id",
+        "firstName",
+        "lastName",
+        "email",
+        "role"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "UserProfile",
+          "schema": {
+            "$ref": "#/backend/entities/UserProfile"
+          },
+          "description": "Stores user profiles. Access control based on `request.auth.uid == userId`. Provides private data.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user, corresponding to their Firebase Auth UID."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/roles_admin/{userId}",
+        "definition": {
+          "entityName": "AdminRole",
+          "schema": {
+            "$ref": "#/backend/entities/UserProfile"
+          },
+          "description": "Documents in this collection grant admin roles. The existence of a document with the user's ID grants admin privileges.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user who has admin privileges."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is designed to ensure security, scalability, and debuggability, adhering to the principles of Authorization Independence, Clarity of Intent, DBAC, and QAPs. It uses Structural Segregation to keep collections homogeneous in terms of security and Access Modeling for consistent authorization patterns.\n\nAuthorization Independence (CRITICAL): The structure avoids hierarchical authorization dependencies by not relying on `get()` calls in security rules. All necessary authorization data is either derived from the `request.auth.uid` or denormalized into the documents themselves, typically through membership maps or explicit role assignments.\n\nQAPs (Rules are not Filters): The structure supports secure `list` operations by ensuring that collections with different access requirements are segregated. For instance, user profiles are stored under `/users/{userId}`, which allows straightforward rules based on `request.auth.uid == userId`.\n\n**Collection Explanations**\n\n*   `/users/{userId}`: Stores user profiles. Access is restricted to the user themselves. This supports user-specific data while enabling efficient `list` operations as no filtering is required in rules.\n\n*   `/roles_admin/{userId}`: Documents in this collection indicate admin roles. The existence of a document with the user's ID grants admin privileges, enabling secure role-based access control without custom claims.\n\nThis design promotes maintainable and secure rules, enhancing the overall robustness and debuggability of the NirogTech application."
+  }
+}
