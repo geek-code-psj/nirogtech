@@ -18,6 +18,7 @@ import { Input } from '@/components/ui/input';
 import { Logo } from '@/components/logo';
 import { useToast } from '@/hooks/use-toast';
 import type { UserProfile } from '@/lib/types';
+import { Switch } from '@/components/ui/switch';
 
 
 const signupSchema = z.object({
@@ -25,6 +26,7 @@ const signupSchema = z.object({
   lastName: z.string().min(1, { message: 'Last name is required.' }),
   email: z.string().email({ message: 'Please enter a valid email address.' }),
   password: z.string().min(6, { message: 'Password must be at least 6 characters long.' }),
+  role: z.enum(['patient', 'doctor']).default('patient'),
 });
 
 type SignupFormValues = z.infer<typeof signupSchema>;
@@ -42,6 +44,7 @@ export default function SignupPage() {
       lastName: '',
       email: '',
       password: '',
+      role: 'patient',
     },
   });
 
@@ -55,7 +58,7 @@ export default function SignupPage() {
         firstName: data.firstName,
         lastName: data.lastName,
         email: data.email,
-        role: 'patient', // Default role
+        role: data.role,
       };
 
       
@@ -68,7 +71,12 @@ export default function SignupPage() {
         description: 'You have been successfully signed up.',
       });
 
-      router.push('/dashboard');
+      if (data.role === 'doctor') {
+        router.push('/signup/doctor-details');
+      } else {
+        router.push('/dashboard');
+      }
+
     } catch (error: any) {
       console.error('Signup Error:', error);
       toast({
@@ -94,6 +102,26 @@ export default function SignupPage() {
            <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} noValidate>
               <CardContent className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="role"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                      <div className="space-y-0.5">
+                        <FormLabel>Are you a doctor?</FormLabel>
+                        <FormDescription>
+                          Select this if you are a medical professional.
+                        </FormDescription>
+                      </div>
+                      <FormControl>
+                        <Switch
+                          checked={field.value === 'doctor'}
+                          onCheckedChange={(checked) => field.onChange(checked ? 'doctor' : 'patient')}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
                 <div className="grid grid-cols-2 gap-4">
                     <FormField
                       control={form.control}

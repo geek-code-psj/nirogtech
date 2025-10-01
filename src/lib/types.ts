@@ -10,6 +10,10 @@ export type UserProfile = {
   dateOfBirth?: string;
   address?: string;
   profilePicture?: string;
+  // Doctor specific fields
+  medicalLicenseNumber?: string;
+  specialization?: string;
+  yearsOfExperience?: number;
 };
 
 export type Doctor = {
