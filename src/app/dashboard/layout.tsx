@@ -6,6 +6,7 @@ import AppSidebar from '@/components/layout/app-sidebar';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import AppHeader from '@/components/layout/app-header';
 import { useUser } from '@/firebase';
+import { ChatbotWidget } from '@/components/chatbot-widget';
 
 
 export default function AppLayout({
@@ -40,6 +41,7 @@ export default function AppLayout({
             {children}
           </main>
         </div>
+        <ChatbotWidget />
       </div>
     </SidebarProvider>
   );
