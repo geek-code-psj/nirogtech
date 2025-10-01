@@ -47,7 +47,7 @@ const liveChatSupportPrompt = ai.definePrompt({
   Otherwise, provide a helpful response and keep escalateToHuman as false.
 
   Here's the conversation history:
-  {{history}}
+  {{{history}}}
 
   User query: {{query}}
 

@@ -14,7 +14,7 @@ import { z } from 'zod';
 
 const NirogChatbotInputSchema = z.object({
   userRole: z.enum(['patient', 'doctor', 'student', 'admin']).describe('The role of the user.'),
-  query: z.string().describe("The user's query or message."),
+  query: z.string().describe('The user\'s query or message.'),
   conversationHistory: z.array(z.object({
     role: z.enum(['user', 'bot']).describe('The role of the message sender.'),
     content: z.string().describe('The content of the message.'),
@@ -23,7 +23,7 @@ const NirogChatbotInputSchema = z.object({
 export type NirogChatbotInput = z.infer<typeof NirogChatbotInputSchema>;
 
 const NirogChatbotOutputSchema = z.object({
-  response: z.string().describe("The AI assistant's response."),
+  response: z.string().describe('The AI assistant\'s response.'),
 });
 export type NirogChatbotOutput = z.infer<typeof NirogChatbotOutputSchema>;
 
