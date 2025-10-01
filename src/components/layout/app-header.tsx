@@ -25,17 +25,17 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
-import { useUser, useDoc, useFirestore, useMemoFirebase } from '@/firebase';
+import { useUser, useDoc, useFirestore, useMemoFirebase, useAuth } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import type { UserProfile } from '@/lib/types';
-import { getAuth, signOut } from 'firebase/auth';
+import { signOut } from 'firebase/auth';
 
 
 export default function AppHeader() {
   const pathname = usePathname();
   const { user } = useUser();
   const firestore = useFirestore();
-  const auth = getAuth();
+  const auth = useAuth();
 
   const userProfileRef = useMemoFirebase(() => {
     if (!user || !firestore) return null;
@@ -43,22 +43,26 @@ export default function AppHeader() {
   }, [firestore, user]);
 
   const { data: userProfile } = useDoc<UserProfile>(userProfileRef);
-  const role = userProfile?.role || 'patient';
 
 
   const getBreadcrumbs = () => {
     const segments = pathname.split('/').filter(Boolean);
     const breadcrumbs = segments.map((segment, index) => {
-        const href = `/${segments.slice(0, index + 1).join('/')}?role=${role}`;
+        const href = `/${segments.slice(0, index + 1).join('/')}`;
         const label = segment.charAt(0).toUpperCase() + segment.slice(1);
         return { href, label };
     });
-    return [{ href: `/dashboard?role=${role}`, label: 'Home' }, ...breadcrumbs];
+    // For dashboard, we want to show 'Home'
+    if (pathname === '/dashboard') {
+        return [{ href: '/dashboard', label: 'Home' }];
+    }
+    return [{ href: `/dashboard`, label: 'Home' }, ...breadcrumbs.filter(b => b.label.toLowerCase() !== 'dashboard')];
   };
 
   const breadcrumbs = getBreadcrumbs();
   
   const handleLogout = () => {
+    if(!auth) return;
     signOut(auth);
   };
 

@@ -7,8 +7,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useAuth, useFirestore } from '@/firebase';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { doc } from 'firebase/firestore';
-import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
+import { doc, setDoc } from 'firebase/firestore';
+
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -45,22 +45,22 @@ export default function SignupPage() {
   });
 
   const onSubmit = async (data: SignupFormValues) => {
+    if (!auth || !firestore) return;
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
       const user = userCredential.user;
 
-      const userProfile: UserProfile = {
-        id: user.uid,
+      const userProfile: Omit<UserProfile, 'id'> = {
         firstName: data.firstName,
         lastName: data.lastName,
         email: data.email,
         role: 'patient', // Default role
       };
 
-      if (firestore) {
-        const userDocRef = doc(firestore, 'users', user.uid);
-        setDocumentNonBlocking(userDocRef, userProfile, { merge: true });
-      }
+      
+      const userDocRef = doc(firestore, 'users', user.uid);
+      await setDoc(userDocRef, userProfile, { merge: true });
+      
 
       toast({
         title: 'Account Created!',

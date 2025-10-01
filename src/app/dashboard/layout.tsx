@@ -1,16 +1,11 @@
 'use client';
-import type { Metadata } from 'next';
+import React, { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import AppSidebar from '@/components/layout/app-sidebar';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import AppHeader from '@/components/layout/app-header';
 import { useUser } from '@/firebase';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
 
-// export const metadata: Metadata = {
-//   title: 'NirogTech Dashboard',
-//   description: 'Manage your healthcare journey with NirogTech.',
-// };
 
 export default function AppLayout({
   children,

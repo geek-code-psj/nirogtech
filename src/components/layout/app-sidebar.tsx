@@ -26,11 +26,11 @@ import {
   Bell,
   MessageSquare
 } from 'lucide-react';
-import { useUser, useDoc, useFirestore, useMemoFirebase } from '@/firebase';
+import { useUser, useDoc, useFirestore, useMemoFirebase, useAuth } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import type { UserProfile } from '@/lib/types';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-import { getAuth, signOut } from 'firebase/auth';
+import { signOut } from 'firebase/auth';
 
 const navLinks = {
   patient: [
@@ -67,7 +67,7 @@ export default function AppSidebar() {
   const pathname = usePathname();
   const { user } = useUser();
   const firestore = useFirestore();
-  const auth = getAuth();
+  const auth = useAuth();
 
 
   const userProfileRef = useMemoFirebase(() => {
@@ -89,13 +89,14 @@ export default function AppSidebar() {
   };
 
   const handleLogout = () => {
+    if(!auth) return;
     signOut(auth);
   };
   
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
-        <Link href={`/dashboard?role=${role}`} className="flex items-center gap-2">
+        <Link href="/dashboard" className="flex items-center gap-2">
             <Logo className="size-8 text-primary" />
             <span className="font-headline text-xl font-bold text-foreground">NirogTech</span>
         </Link>
@@ -109,7 +110,7 @@ export default function AppSidebar() {
                 isActive={isActive(link.href)}
                 tooltip={{ children: link.label }}
               >
-                <Link href={`${link.href}?role=${role}`}>
+                <Link href={link.href}>
                   <link.icon className="size-4" />
                   <span>{link.label}</span>
                 </Link>
@@ -122,7 +123,7 @@ export default function AppSidebar() {
         <SidebarMenu>
             <SidebarMenuItem>
                 <SidebarMenuButton asChild tooltip={{children: 'User Profile'}}>
-                    <Link href={`/profile?role=${role}`}>
+                    <Link href="/profile">
                         <Avatar className="size-7">
                             <AvatarImage src={userProfile?.profilePicture || "https://picsum.photos/seed/user-avatar/100/100"} alt={userProfile?.firstName} />
                             <AvatarFallback>{userProfile?.firstName?.charAt(0) || 'U'}</AvatarFallback>

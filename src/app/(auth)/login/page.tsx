@@ -1,12 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useAuth, useUser } from '@/firebase';
-import { initiateEmailSignIn } from '@/firebase/non-blocking-login';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -25,7 +25,6 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const auth = useAuth();
   const { user, isUserLoading } = useUser();
   const { toast } = useToast();
@@ -40,17 +39,26 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (user) {
-      const role = searchParams.get('role') || 'patient';
-      router.push(`/dashboard?role=${role}`);
+      router.push('/dashboard');
     }
-  }, [user, router, searchParams]);
+  }, [user, router]);
 
-  const onSubmit = (data: LoginFormValues) => {
-    initiateEmailSignIn(auth, data.email, data.password);
-    toast({
-      title: "Signing In...",
-      description: "Please wait while we sign you in.",
-    });
+  const onSubmit = async (data: LoginFormValues) => {
+    if (!auth) return;
+    try {
+      await signInWithEmailAndPassword(auth, data.email, data.password);
+      toast({
+        title: "Signing In...",
+        description: "Please wait while we sign you in.",
+      });
+    } catch (error: any) {
+      console.error("Login Error:", error);
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: error.message || "Could not sign you in.",
+      });
+    }
   };
 
   if (isUserLoading) {
