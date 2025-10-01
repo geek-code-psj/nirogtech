@@ -65,6 +65,18 @@
       "description": "Thumbnail for a case study on neurology.",
       "imageUrl": "https://images.unsplash.com/photo-1644648479153-2a3dbee76212?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxicmFpbiUyMG1yaXxlbnwwfHx8fDE3NTkzNTA1MTR8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "brain mri"
+    },
+    {
+      "id": "support-avatar",
+      "description": "Avatar for the support chatbot.",
+      "imageUrl": "https://images.unsplash.com/photo-1718453909024-6fcf3e3771c7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxzdXBwb3J0JTIwYm90fGVufDB8fHx8MTc1OTI3MDM0MXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "support bot"
+    },
+    {
+      "id": "user-avatar",
+      "description": "Avatar for the current user.",
+      "imageUrl": "https://images.unsplash.com/photo-1630910561339-4e22c7150093?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHx1c2VyJTIwYXZhdGFyfGVufDB8fHx8MTc1OTMyNjkwM3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "user avatar"
     }
   ]
 }
